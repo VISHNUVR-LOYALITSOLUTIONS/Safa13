@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates>
+
+    <t t-extend="PackLotLinePopupWidget">
+        <t t-jquery=".packlot-lines" t-operation="before">
+            <div class="packlot-select">
+<!--                <t t-esc="widget.get_product_lots()" />-->
+                <select class="packlot-line-select" >
+<!--                        style="font-size: 20px;-->
+<!--                            font-family: Lato;-->
+<!--                            display: block;-->
+<!--                            width: 100%;-->
+<!--                            box-sizing: border-box;-->
+<!--                            -moz-box-sizing: border-box;-->
+<!--                            outline: none;-->
+<!--                            border: none;-->
+<!--                            padding: 6px 8px;-->
+<!--                            background: rgb(110,200,155);-->
+<!--                            color: #FFF;-->
+<!--                            text-align: center;-->
+<!--                            border-radius: 3px;-->
+<!--                            box-shadow: 0px 2px rgba(143, 143, 143, 0.3) inset;">-->
+
+                        <option disabled="" selected="" value="">Select a Serial/Lot Number</option>
+                </select>
+<!--                <t t-if="widget.options.pack_lot_lines and widget.options.pack_lot_lines.lot_name">-->
+<!--                    <select class="packlot-line-select">-->
+<!--                        <option disabled="" selected="" value="">Select a Serial/Lot Number</option>-->
+<!--                        <t t-foreach="widget.options.pack_lot_lines.lot_name" t-as="lot_name">-->
+<!--                            <option t-att-value="lot_name">-->
+<!--                                <t t-esc="lot_name"/>-->
+<!--                            </option>-->
+<!--                        </t>-->
+<!--                    </select>-->
+<!--                </t>-->
+            </div>
+        </t>
+<!--        <t t-jquery="i.remove-lot" t-operation="after">-->
+<!--            <i t-attf-class="oe_link_icon lot-clone fa fa-clone #{widget.options.pack_lot_lines.lot_name.length &lt; 1 ? 'oe_hidden' : ''}"></i>-->
+<!--        </t>-->
+    </t>
+
+    <t t-name="LotOption">
+        <option t-att-value="product_lots.name">
+            <t t-esc="product_lots.name"/>
+            <t t-if="product_lots.use_date">
+                - <t t-esc="moment(product_lots.use_date).format('L')"/>
+<!--                - <t t-esc="product_lots.use_date"/>-->
+            </t>
+        </option>
+    </t>
+</templates>
