@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates>
+    <t t-extend="OrderReceipt">
+        <t t-jquery='.pos-receipt' t-operation='replace'>
+            <div class="pos-receipt">
+
+                <div style="font-family:Calibri;text-align:center;">
+<!--                    <t t-if='receipt.company.logo'>-->
+<!--                        <img t-att-src='receipt.company.logo'/>-->
+<!--                        <br/>-->
+<!--                    </t>-->
+<!--                    <t t-if='!receipt.company.logo'>-->
+                        <h4 style="font-family:Calibri;text-align:center;">
+                            COZMEDICS
+                        </h4>
+<!--                    </t>-->
+                </div>
+                <div style="width: 100%;padding:0px;text-align:center;font-size:12px;font-family:Calibri;">
+                    <t t-if="widget.pos.company.street">
+                        <t t-esc="widget.pos.company.street"/>,
+                    </t>
+                    <t t-if="widget.pos.company.street2">
+                        <t t-esc="widget.pos.company.street2"/>,
+                    </t>
+                    <t t-if="widget.pos.company.city">
+                        <t t-esc="widget.pos.company.city"/>
+                        <br/>
+                    </t>
+                    <t t-if="widget.pos.company.state_id[1]">
+                        <t t-esc="widget.pos.company.state_id[1]"/>
+                        <br/>
+                    </t>
+                    <t t-if="widget.pos.company.country_id[1]">
+                        <t t-esc="widget.pos.company.country_id[1]"/>
+                        <br/>
+                    </t>
+                    <!-- Company data -->
+                    <t t-if="widget.pos.company.email">
+                        <t t-esc="widget.pos.company.email"/>
+                        <br/>
+                    </t>
+                    <t t-if="widget.pos.company.phone">
+                        Phone:
+                        <t t-esc="widget.pos.company.phone"/>
+                        <br/>
+                    </t>
+                    <t t-if="widget.pos.company.vat">
+                        <b>GSTIN:
+                            <t t-esc="widget.pos.company.vat"/>
+                        </b>
+                    </t>
+                    <h4 style="text-align:center;border-top: 1px  solid gray;border-bottom: 1px  solid gray;font-family:Calibri ;">
+                        TAX INVOICE
+                    </h4>
+                </div>
+
+                <!--                <hr style="display: block;-->
+                <!--                        margin-top: 0.5em;-->
+                <!--                        margin-bottom: 0.5em;-->
+                <!--                        margin-left: auto;-->
+                <!--                        margin-right: auto;-->
+                <!--                        border-style: dashed;-->
+                <!--                        border-width: 1px;"></hr>-->
+                <div style="font-size:12px;font-family:Calibri ;">
+                    Invoice No <span style="padding-left:35px;">: </span>
+                    <t t-esc="order.name"/>
+                    <br/>
+                    Date<span style="padding-left:76px;">: </span>
+                    <t t-esc="moment().format('L')"/>
+                    <br/>
+                    <t t-set="client" t-value="order.get_client()"/>
+                    <t t-if="client">
+                        Customer Name<span style="padding-left:6px;">: </span>
+                        <t t-esc="client['name']"/>
+                        <br/>
+                        <t t-if="client['phone']">
+                            Cust Mobile No<span style="padding-left:10px;">: </span>
+                            <t t-esc="client['phone']"/>
+                            <br/>
+                        </t>
+                        <t t-if="!client['phone'] and client['mobile']">
+                            Cust Mobile No<span style="padding-left:10px;">: </span>
+                            <t t-esc="client['mobile']"/>
+                            <br/>
+                        </t>
+                    </t>
+                    <br/>
+                </div>
+                <t t-set="total_gst" t-value="0"/>
+                <table class='orderline' style="font-size:12px;font-family:Calibri;">
+                    <colgroup>
+                        <col width="8%"/>
+                        <col width='15%'/>
+                        <col width='19%'/>
+                        <col width='17%'/>
+                        <col width='18%'/>
+                        <col width='23%'/>
+                    </colgroup>
+                    <tr style="font-size:10px;font-family:Calibri ;">
+                        <td align="left" style="border-top: 1px  solid gray;">
+                            Sl
+                        </td>
+                        <td align="left" colspan="2" style="border-top: 1px  solid gray;">
+                            Product
+                        </td>
+                        <td align="right" style="border-top: 1px  solid gray;">
+                            Price
+                        </td>
+                        <td align="center" style="border-top: 1px  solid gray;">
+                            Disc(%)
+                        </td>
+                        <td align="right" style="border-top: 1px  solid gray;">
+                            Amt
+                        </td>
+                    </tr>
+                    <tr style="font-size:10px;font-family:Calibri ;">
+                        <td align="right" style="border-bottom: 1px  solid gray;">
+                        </td>
+                        <td align="left" style="border-bottom: 1px  solid gray;">
+                            Qty
+                        </td>
+                        <td align="left" style="border-bottom: 1px  solid gray;">
+                            HSN Code
+                        </td>
+                        <td align="center" style="border-bottom: 1px  solid gray;">
+                            GST %
+                        </td>
+                        <td align="center" style="border-bottom: 1px  solid gray;">
+                            GST Amt
+                        </td>
+                        <td align="center" style="border-bottom: 1px  solid gray;">
+                            KFC@1
+                        </td>
+                    </tr>
+                    <t t-set="sl" t-value="0"/>
+                    <t t-set="i" t-value="0"/>
+                    <t t-set="j" t-value="0"/>
+                    <t t-set="qty" t-value="0"/>
+                    <t t-set="discount" t-value="0"/>
+                    <t t-set="total_sale_before_discount" t-value="0"/>
+                    <t t-foreach="orderlines" t-as="orderline">
+                        <t t-if="widget.pos.config.module_pos_discount">
+                            <t t-if="widget.pos.config.discount_product_id">
+                                <t t-if="orderline.get_product().id == widget.pos.config.discount_product_id[0]">
+                                    <t t-set="discount" t-value="discount+orderline.get_unit_price()"/>
+                                </t>
+                                <t t-if="orderline.get_product().id!=widget.pos.config.discount_product_id[0]">
+                                    <t t-set="total_sale_before_discount" t-value="total_sale_before_discount+orderline.get_price_with_tax_before_discount()"/>
+                                    <tr style="font-size:10px;font-weight:bold;font-family:Calibri !important;">
+                                        <td class="pos-center-align">
+                                            <t t-set="sl" t-value="sl+1"/>
+                                            <t t-esc="sl"/>
+                                        </td>
+                                        <td class="pos-left-align" colspan="2">
+                                            <t t-esc="orderline.get_product().display_name"/>
+                                        </td>
+                                        <td class="pos-right-align">
+                                            <t t-esc="widget.format_currency_no_symbol(orderline.get_unit_price())"/>
+                                        </td>
+                                        <td class="pos-center-align">
+                                            <t t-if="orderline.get_discount() > 0">
+                                                <t t-esc="orderline.get_discount()"/>%
+                                            </t>
+                                            <t t-if="!orderline.get_discount()">
+                                                ...
+                                            </t>
+                                        </td>
+                                        <td class="pos-right-align">
+                                            <t t-esc="widget.format_currency_no_symbol(orderline.get_display_price())"/>
+                                            <t t-set="j" t-value="j + (orderline.get_display_price())"/>
+                                        </td>
+                                    </tr>
+                                    <tr style="font-size:11px;font-family:Calibri !important;">
+                                        <td class="pos-center-align">
+                                        </td>
+                                        <td class="pos-left-align">
+                                            <t t-esc="orderline.get_quantity_str()"/>
+                                            <t t-set="qty" t-value="qty+orderline.get_quantity()"/>
+                                        </td>
+                                        <td class="pos-left-align">
+                                            <t t-if="orderline.get_product().l10n_in_hsn_code">
+                                                <t t-esc="orderline.get_product().l10n_in_hsn_code"/>
+                                            </t>
+                                        </td>
+                                        <td class="pos-center-align">
+                                            <t t-foreach="orderline.get_orderline_tax()" t-as="tax">
+                                                <t t-if="tax.rate">
+                                                    <t t-esc="tax.rate"/>%
+                                                </t>
+                                            </t>
+                                        </td>
+                                        <td class="pos-center-align">
+                                            <t t-foreach="orderline.get_orderline_tax()" t-as="tax">
+                                                <t t-esc="widget.format_currency_no_symbol(tax.gst)"/>
+                                                <t t-set="total_gst" t-value="total_gst+tax.gst"/>
+                                            </t>
+
+                                        </td>
+                                        <td class="pos-center-align">
+                                            <t t-foreach="orderline.get_orderline_tax()" t-as="tax">
+                                                <t t-esc="widget.format_currency_no_symbol(tax.kfc)"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                        </t>
+                        <t t-if="!widget.pos.config.module_pos_discount">
+                            <t t-set="total_sale_before_discount" t-value="total_sale_before_discount+orderline.get_price_with_tax_before_discount()"/>
+
+                            <tr style="font-size:10px;font-weight:bold;font-family:Calibri !important;">
+                                <td class="pos-center-align">
+                                    <t t-set="sl" t-value="sl+1"/>
+                                    <t t-esc="sl"/>
+                                </td>
+                                <td class="pos-left-align" colspan="2">
+                                    <t t-esc="orderline.get_product().display_name"/>
+                                </td>
+                                <td class="pos-right-align">
+                                    <t t-esc="widget.format_currency_no_symbol(orderline.get_unit_price())"/>
+                                </td>
+                                <td class="pos-center-align">
+                                    <t t-if="orderline.get_discount() > 0">
+                                        <t t-esc="widget.format_currency_no_symbol(orderline.get_discount())"/>%
+                                    </t>
+                                    <t t-if="!orderline.get_discount()">
+                                        ...
+                                    </t>
+                                </td>
+                                <td class="pos-right-align">
+                                    <t t-esc="widget.format_currency_no_symbol(orderline.get_display_price())"/>
+                                    <t t-set="j" t-value="j + (orderline.get_display_price())"/>
+                                </td>
+                            </tr>
+                            <tr style="font-size:11px;font-family:Calibri !important;">
+                                <td class="pos-center-align">
+                                </td>
+                                <td class="pos-left-align">
+                                    <t t-esc="orderline.get_quantity_str()"/>
+                                    <t t-set="qty" t-value="qty+orderline.get_quantity()"/>
+                                </td>
+                                <td class="pos-left-align">
+                                    <t t-if="orderline.get_product().l10n_in_hsn_code">
+                                        <t t-esc="orderline.get_product().l10n_in_hsn_code"/>
+                                    </t>
+                                </td>
+                                <td class="pos-center-align" >
+                                    <t t-foreach="orderline.get_orderline_tax()" t-as="tax">
+                                        <t t-if="tax.rate">
+                                            <t t-esc="tax.rate"/>%
+                                        </t>
+                                    </t>
+                                </td>
+                                <td class="pos-center-align" >
+                                    <t t-foreach="orderline.get_orderline_tax()" t-as="tax">
+                                        <t t-esc="widget.format_currency_no_symbol(tax.gst)"/>
+                                        <t t-set="total_gst" t-value="total_gst+tax.gst"/>
+                                    </t>
+
+                                </td>
+                                <td class="pos-center-align" >
+                                    <t t-foreach="orderline.get_orderline_tax()" t-as="tax">
+                                        <t t-esc="widget.format_currency_no_symbol(tax.kfc)"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </t>
+                    </t>
+                    <tr style="border-top: 1px  solid gray;">
+                        <td class="pos-center-align">
+                            <t t-esc="sl"/>
+                        </td>
+                        <td colspan="5" class="pos-right-align">
+                            <t t-esc="widget.format_currency_no_symbol(order.get_total_with_tax()-discount)"/>
+                        </td>
+                    </tr>
+                    <tr style="border-top: 1px  solid gray;border-bottom: 1px  solid gray;">
+                        <td colspan="6">
+                            <t t-esc="order.get_amount_in_words(order.get_total_with_tax())" />
+                        </td>
+                    </tr>
+
+                </table>
+                <table  style="width: 100%;font-size:11px;font-family:Calibri;">
+                    <col width="18%"/>
+                    <col width='32%'/>
+                    <col width='25%'/>
+                    <col width='25%'/>
+                    <tr style="border-bottom: 1px  solid gray;font-weight:bold;font-size:11px;">
+                        <td align="left">
+                            Tax Rate
+                        </td>
+                        <td align="right">
+                            Taxable Amt.
+                        </td>
+                        <td align="right">
+                            CGST Amt.
+                        </td>
+                        <td align="right">
+                            SGST Amt.
+                        </td>
+                    </tr>
+                    <tr t-foreach="order.get_grouped_tax_details()" t-as="tax_detail">
+                        <td align="left">
+                            <t t-if="tax_detail.rate">
+                                <t t-esc="tax_detail.rate"/>%
+                            </t>
+                        </td>
+                        <td align="right">
+                            <t t-esc="widget.format_currency_no_symbol(tax_detail.taxable)"/>
+                        </td>
+                        <td align="right">
+                            <t t-esc="widget.format_currency_no_symbol(tax_detail.cgst)"/>
+                        </td>
+                        <td align="right">
+                            <t t-esc="widget.format_currency_no_symbol(tax_detail.sgst)"/>
+                        </td>
+                    </tr>
+                </table>
+                <table style="width: 100%;font-size:11px;font-family:Calibri;font-weight:bold;">
+                    <col width="30%"/>
+                    <col width='3%'/>
+                    <col width='32%'/>
+                    <col width='35%'/>
+                    <tr>
+                        <td colspan="4"><br/></td>
+                    </tr>
+                    <tr >
+                        <td align="left" >Total GST</td>
+                        <td align="center" >:</td>
+                        <td align="right" ><t t-esc="widget.format_currency_no_symbol(receipt.total_tax)"/></td>
+                        <td align="left" ></td>
+                    </tr>
+                    <tr >
+                        <td align="left" >Total Sale</td>
+                        <td align="center" >:</td>
+                        <td align="right" ><t t-esc="widget.format_currency_no_symbol(total_sale_before_discount)"/></td>
+                        <td align="left" ></td>
+                    </tr>
+                    <tr >
+                        <td align="left" >Total Savings</td>
+                        <td align="center" >:</td>
+                        <td align="right" ><t t-esc="widget.format_currency_no_symbol(receipt.total_discount-discount)"/></td>
+                        <td align="left" ></td>
+                    </tr>
+                    <tr >
+                        <td align="left" >Net Payable</td>
+                        <td align="center" >:</td>
+                        <td align="right" ><t t-esc="widget.format_currency_no_symbol(order.get_total_with_tax())"/></td>
+                        <td align="left" ></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4"><br/></td>
+                    </tr>
+                </table>
+<!--                <div style="width: 100%;font-size:12px;font-family:Calibri;font-weight:bold;">-->
+<!--                    <br/>-->
+<!--                    <span>Total GST</span><span>:</span>-->
+<!--                    <br/>-->
+<!--                    <span>Total Sale</span><span>:</span>-->
+<!--                    <br/>-->
+<!--                    <span>Total Savings</span><span>:</span>-->
+<!--                    <br/>-->
+<!--                    <span>Net Payable</span><span>:</span>-->
+<!--                    <br/>-->
+<!--                </div>-->
+                <table style="width: 100%;font-size:14px;font-family:Calibri;font-weight:bold;">
+                    <tr style="border-bottom: 1px  solid gray;border-top: 1px  solid gray;">
+                        <td align="center" style="padding:5px;">THANK YOU. VISIT US AGAIN</td>
+                    </tr>
+                </table>
+
+            </div>
+        </t>
+    </t>
+
+</templates>
