@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data noupdate="1">
+        <record id="sms_template_for_pos_order_creation" model="sms.notification.template">
+            <field name="name">SMS notification to customer when POS order placed</field>
+            <field name="condition">pos_order_placed</field>
+            <field name="auto_delete" eval="True"/>
+            <field name="sms_body_html"><![CDATA[
+              Dear ${object.partner_id.name},
+              <p>Cozmedics extends thanks for your esteemed visit and appreciate the valuable patronage given. Your available total points are ${object.partner_id.loyalty_points}. Please contact ${object.company_id.phone} for assistance.</p>
+                            ]]>
+            </field>
+        </record>
+    </data>
+</openerp>
