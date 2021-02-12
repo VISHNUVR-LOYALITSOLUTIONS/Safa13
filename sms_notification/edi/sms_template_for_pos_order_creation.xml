@@ -6,8 +6,10 @@
             <field name="condition">pos_order_placed</field>
             <field name="auto_delete" eval="True"/>
             <field name="sms_body_html"><![CDATA[
-              Dear ${object.partner_id.name},
-              <p>Cozmedics extends thanks for your esteemed visit and appreciate the valuable patronage given. Your available total points are ${object.partner_id.loyalty_points}. Please contact ${object.company_id.phone} for assistance.</p>
+                Dear ${object.partner_id.name},
+                    Thank You for shopping @ COZMEDICS.
+                    Your available BEAUTY Points are ${object.partner_id.loyalty_points+object.loyalty_points}.
+                    Give your valuable feedback @ https://forms.gle/bnUocEpzejk51tVG7.
                             ]]>
             </field>
         </record>
