@@ -1,0 +1,16 @@
+<odoo>
+    <data>
+        <record id="view_account_move_total_product_form" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='narration']" position="before">
+                    <br/>
+                    <label for="total_purchase_quantity" string="Total Quantity:"/>
+                    <field name="total_invoiced_qty"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

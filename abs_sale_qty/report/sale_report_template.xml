@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_sale_order_document_inherit" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//p[@t-field='doc.note']" position="before">
+            <strong style="font-size: 11px;font-family:Arial;" >Total Quantity: </strong>
+            <span t-field="doc.total_sale_qty"/>
+        </xpath>
+
+        <xpath expr="//thead/tr/th[@name='th_description']" position="before">
+            <th name="th_sl_no"><strong>Sl No.</strong></th>
+        </xpath>
+
+        <xpath expr="//td[@name='td_name']" position="before">
+            <td class="text-center">
+                <t t-esc="line_index+1"/>
+            </td>
+        </xpath>
+    </template>
+
+</odoo>

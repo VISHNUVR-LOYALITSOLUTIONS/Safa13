@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_purchaseorder_quotation_document_inherit" inherit_id="purchase.report_purchasequotation_document">
+        <xpath expr="//t[@t-set='address']" position="replace">
+            <div class="address row">
+                <div name="shipping_address" class="col-4">
+                        <strong>Delivery address:</strong>
+                    <div t-field="o.delivery_address_id"
+                         t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' name="purchase_delivery_address"/>
+                    </div>
+                <div name="billing_adress" class="col-4">
+                    <strong>Billing address:</strong>
+                    <div t-field="o.company_id.partner_id"
+                         t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}' name="purchase_billing_address"/>
+
+                </div>
+                <div name="partner_address" class="col-4">
+                    <div t-field="o.partner_id"
+                        t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                        <p t-if="o.partner_id.vat"><t t-esc="o.company_id.country_id.vat_label or 'Tax ID'"/>: <span t-field="o.partner_id.vat"/></p>
+                </div>
+            </div>
+
+        </xpath>
+        <xpath expr="//t[@t-if='o.dest_address_id']" position="replace">
+
+        </xpath>
+    </template>
+
+    <template id="report_purchasequotation_document_inherit" inherit_id="purchase_stock.report_purchasequotation_document">
+        <xpath expr="//t[@t-else='']" position="replace">
+
+        </xpath>
+    </template>
+
+</odoo>
