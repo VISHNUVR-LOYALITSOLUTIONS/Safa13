@@ -24,16 +24,19 @@ class MSG91Client(object):
 
     def __init__(self, api_key, **kwargs):
         self.auth_key = api_key
-        self.sender_id = kwargs.get('sender_id') or 'COZMDS'
+        self.sender_id = kwargs.get('sender_id') or 'Cozmds'
         self.route = kwargs.get('route') or 4
         self.sms_url = "http://control.msg91.com/api/v2/sendsms"
+        self.DLT_TE_ID = '1207161674055444117'
 
     def send_sms(self, message, mobile, country=0):
+        DLT_TE_ID = '1207161674055444117'
         res = requests.get(self.sms_url,
                            params={'authkey': self.auth_key,
                                    'mobiles': mobile,
                                    'message': message,
                                    'sender': self.sender_id,
+                                   'DLT_TE_ID':self.DLT_TE_ID,
                                    'route': self.route,
                                    'country': country,
                                    'response': 'json'})
