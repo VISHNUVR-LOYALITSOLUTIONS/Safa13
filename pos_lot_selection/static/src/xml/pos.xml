@@ -42,12 +42,14 @@
     </t>
 
     <t t-name="LotOption">
-        <option t-att-value="product_lots.name">
+         <option t-att-value="product_lots.name">
             <t t-esc="product_lots.name"/>
+             (<t t-esc="product_lots.product_qty"/>)
             <t t-if="product_lots.use_date">
                 - <t t-esc="moment(product_lots.use_date).format('L')"/>
 <!--                - <t t-esc="product_lots.use_date"/>-->
             </t>
         </option>
+
     </t>
 </templates>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates>
+
+  <t t-extend="Orderline">
+        <t t-jquery=".product-name" t-operation="prepend">
+                <span>
+                    <t t-esc="line.get_sequence()"/>.
+                </span>
+        </t>
+    </t>
+
+
+
+
+</templates>
