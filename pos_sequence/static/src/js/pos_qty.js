@@ -53,7 +53,10 @@ odoo.define('pos_sequence.pos_qty', function (require) {
              this.numpad_state.reset();
              var order = this.pos.get_order();
           var orderlines = order.get_selected_orderline();
-         var sequence = orderlines.get_sequence();
+          if (orderlines){
+          var sequence = orderlines.get_sequence();
+          }
+
             },
 
 
