@@ -9,6 +9,29 @@
                     <field name="mrp"/>
                     <field name="margin_percentage"/>
                 </xpath>
+                <xpath expr="//field[@name='order_line']/kanban/field[@name='product_qty']" position="before">
+                    <field name="mrp"/>
+                    <field name="margin_percentage"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/kanban/templates//t[@t-if='!record.display_type.raw_value']"
+                       position="inside">
+                    <div class="row">
+                        <div class="col-12 text-muted">
+                            <span>
+                                MRP:
+                                <t t-esc="record.mrp.value"/>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-muted">
+                            <span>
+                                Margin %:
+                                <t t-esc="record.margin_percentage.value"/>
+                            </span>
+                        </div>
+                    </div>
+                </xpath>
             </field>
         </record>
     </data>
