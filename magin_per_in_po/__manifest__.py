@@ -27,10 +27,14 @@
         'views/views.xml',
         'views/templates.xml',
         'report/purchase_report_template.xml',
-        'application': True,
+        
     ],
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
+    
+    'installable': True,
+    'application': True,
+    'auto_install': False,
 }
