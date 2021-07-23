@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "expire_date_alert",
+    'name': "Expiry Date Alert",
 
     'summary': """
         expire_date_alert""",

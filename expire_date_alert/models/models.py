@@ -19,10 +19,12 @@ class StockPicking(models.Model):
     @api.constrains('move_line_ids_without_package')
     def _check_expiry_date(self):
         for i in self.move_line_ids_without_package:
-            alert_date = (i.expiry_date.date() - timedelta(days=6 * 30))
-                # .strftime(DEFAULT_SERVER_DATETIME_FORMAT)
-            if self.scheduled_date.date() <= alert_date:
-                raise ValidationError(
-                    _("You are not allowed to receive the lot %s." % i.lot_id.name))
+            if self.picking_type_code == 'incoming':
+                if i.expiry_date:
+                    alert_date = (i.expiry_date.date() - timedelta(days=6 * 30))
+                        # .strftime(DEFAULT_SERVER_DATETIME_FORMAT)
+                    if self.scheduled_date.date() <= alert_date:
+                        raise ValidationError(
+                            _("You are not allowed to receive the lot %s." % i.lot_id.name))
 
 
